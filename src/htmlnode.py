@@ -1,3 +1,6 @@
+from textnode import TextNode, TextType
+
+
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
         self.tag = tag
@@ -56,3 +59,21 @@ class ParentNode(HTMLNode):
 
     def __repr__(self):
         return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
+
+
+def text_node_to_html_node(text_node: TextNode):
+    match text_node.text_type:
+        case TextType.TEXT:
+            return LeafNode(None, text_node.text)
+        case TextType.BOLD:
+            return LeafNode("b", value=text_node.text)
+        case TextType.ITALIC:
+            return LeafNode("i", value=text_node.text)
+        case TextType.CODE:
+            return LeafNode("code", value=text_node.text)
+        case TextType.LINK:
+            return LeafNode("a", value=text_node.text, props={"href": text_node.url})
+        case TextType.IMAGE:
+            return LeafNode("img", props={"src": text_node.url, "alt": text_node.text})
+
+    raise Exception("invalid tag type")
